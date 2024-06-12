@@ -24,7 +24,9 @@ async function init() {
 
   app.ticker.add((time) => {
     animateCows(app, cows, time);
+    animateChickens(app, chickens, time);
     checkCowCollision(cows);
+    checkChickenCollision(chickens);
   });
 }
 async function setup() {
@@ -78,6 +80,8 @@ async function addSheep() {
     sheep.y = 400;
 
     app.stage.addChild(sheep);
+
+    sheeps.push(sheep);
   }
 }
 
@@ -95,22 +99,33 @@ async function addPigs() {
     pig.y = 200;
 
     app.stage.addChild(pig);
+
+    pigs.push(pig);
   }
 }
 async function addChickens() {
   const chickenTexture = await Assets.load("./assets/chicken.png");
+  const chickenContainer = new Container();
 
   const chickenCount = 5;
 
   for (let i = 0; i < chickenCount; i++) {
     const chicken = new Sprite(chickenTexture);
+    app.stage.addChild(chickenContainer);
 
     chicken.anchor.set(0.5);
+
+    chicken.direction = Math.random() * Math.PI * 2;
+    chicken.speed = Math.random() + 1;
+    chicken.turningSpeed = Math.random() - 0.8;
 
     chicken.x = 150;
     chicken.y = 400;
 
+    chicken.scale.set(0.8 + Math.random() * 0.3);
+    chickenContainer.addChild(chicken);
     app.stage.addChild(chicken);
+    chickens.push(chicken);
   }
 }
 
@@ -142,6 +157,34 @@ function animateCows(app, cows, time) {
   });
 }
 
+function animateChickens(app, chickens, time) {
+  const delta = time.deltaTime;
+
+  const stagePadding = 100;
+  const boundWidth = app.screen.width + stagePadding * 2;
+  const boundHeight = app.screen.height + stagePadding * 2;
+
+  chickens.forEach((chicken) => {
+    chicken.direction += chicken.turningSpeed * 0.01;
+    chicken.x += Math.sin(chicken.direction) * chicken.speed;
+    chicken.y += Math.cos(chicken.direction) * chicken.speed;
+    chicken.rotation = -chicken.direction - Math.PI / 2;
+
+    if (chicken.x < -stagePadding) {
+      chicken.x += boundWidth;
+    }
+    if (chicken.x > boundWidth) {
+      chicken.x -= boundWidth;
+    }
+    if (chicken.y < -stagePadding) {
+      chicken.y += boundHeight;
+    }
+    if (chicken.y > boundHeight) {
+      chicken.y -= boundHeight;
+    }
+  });
+}
+
 function checkCowCollision(cows) {
   cows.forEach((cow) => {
     if (cow.x < 0) {
@@ -155,6 +198,23 @@ function checkCowCollision(cows) {
     }
     if (cow.y > 300) {
       cow.y = 0;
+    }
+  });
+}
+
+function checkChickenCollision(chickens) {
+  chickens.forEach((chicken) => {
+    if (chicken.x < 0) {
+      chicken.x = 400;
+    }
+    if (chicken.x > 400) {
+      chicken.x = 0;
+    }
+    if (chicken.y < 300) {
+      chicken.y = 600;
+    }
+    if (chicken.y > 600) {
+      chicken.y = 300;
     }
   });
 }
