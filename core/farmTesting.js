@@ -24,6 +24,7 @@ async function init() {
 
   app.ticker.add((time) => {
     animateCows(app, cows, time);
+    checkCowCollision(cows);
   });
 }
 async function setup() {
@@ -51,8 +52,8 @@ async function addCows() {
     cow.speed = Math.random() + 1;
     cow.turningSpeed = Math.random() - 0.8;
 
-    cow.x = Math.random() * app.screen.width;
-    cow.y = Math.random() * app.screen.height;
+    cow.x = 150;
+    cow.y = 200;
 
     cow.scale.set(0.8 + Math.random() * 0.3);
     cowContainer.addChild(cow);
@@ -73,8 +74,8 @@ async function addSheep() {
 
     sheep.anchor.set(0.5);
 
-    sheep.x = Math.random() * app.screen.width;
-    sheep.y = Math.random() * app.screen.height;
+    sheep.x = 600;
+    sheep.y = 400;
 
     app.stage.addChild(sheep);
   }
@@ -90,8 +91,8 @@ async function addPigs() {
 
     pig.anchor.set(0.5);
 
-    pig.x = Math.random() * app.screen.width;
-    pig.y = Math.random() * app.screen.height;
+    pig.x = 600;
+    pig.y = 200;
 
     app.stage.addChild(pig);
   }
@@ -106,8 +107,8 @@ async function addChickens() {
 
     chicken.anchor.set(0.5);
 
-    chicken.x = Math.random() * app.screen.width;
-    chicken.y = Math.random() * app.screen.height;
+    chicken.x = 150;
+    chicken.y = 400;
 
     app.stage.addChild(chicken);
   }
@@ -137,6 +138,23 @@ function animateCows(app, cows, time) {
     }
     if (cow.y > boundHeight) {
       cow.y -= boundHeight;
+    }
+  });
+}
+
+function checkCowCollision(cows) {
+  cows.forEach((cow) => {
+    if (cow.x < 0) {
+      cow.x = 400;
+    }
+    if (cow.x > 400) {
+      cow.x = 0;
+    }
+    if (cow.y < 0) {
+      cow.y = 300;
+    }
+    if (cow.y > 300) {
+      cow.y = 0;
     }
   });
 }
